@@ -1,6 +1,6 @@
-# Non-Profit Impact Archive
+# Hike For A Cure Archive
 
-A full-stack MERN application built to archive and display the annual fundraising success of Hike for a cure.
+A full-stack MERN application built to archive and display the annual fundraising success of Hike For A Cure.
 
 ## Tech Stack
 - **Frontend:** React (Vite), TypeScript
