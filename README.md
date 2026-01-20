@@ -3,6 +3,7 @@
 A full-stack MERN application built to archive and display the annual fundraising success of Hike For A Cure.
 
 ## Tech Stack
+
 - **Frontend:** React (Vite), TypeScript
 - **Backend:** Node.js, Express
 - **Database:** MongoDB Atlas (hosted on AWS)
@@ -15,3 +16,4 @@ A full-stack MERN application built to archive and display the annual fundraisin
 4. **Run the app:**
    ```bash
    npm run dev
+   ```
