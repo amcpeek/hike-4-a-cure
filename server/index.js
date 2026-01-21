@@ -44,6 +44,7 @@ app.put("/api/fundraisers/:id", async (req, res) => {
         description: req.body.description,
         title: req.body.title,
         amountRaised: req.body.amountRaised,
+        photos: req.body.photos,
       },
       { new: true },
     );
