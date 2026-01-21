@@ -34,6 +34,25 @@ app.post("/api/fundraisers", async (req, res) => {
   }
 });
 
+app.put("/api/fundraisers/:id", async (req, res) => {
+  //
+  try {
+    const fundraiserToUpdate = await Fundraiser.findByIdAndUpdate(
+      req.params.id,
+      {
+        year: req.body.year,
+        description: req.body.description,
+        title: req.body.title,
+        amountRaised: req.body.amountRaised,
+      },
+      { new: true },
+    );
+    res.status(200).json(fundraiserToUpdate);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 app.get("/api/fundraisers", async (req, res) => {
   //
   try {
@@ -41,6 +60,19 @@ app.get("/api/fundraisers", async (req, res) => {
     res.json(fundraisers);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+app.delete("/api/fundraisers/:id", async (req, res) => {
+  console.log("in BE", req.params.id);
+  try {
+    const deletedFundraiser = await Fundraiser.findByIdAndDelete(req.params.id);
+    if (!deletedFundraiser) {
+      return res.status(404).json({ message: "Fundraiser not found" });
+    }
+    res.status(200).json(deletedFundraiser);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 });
 

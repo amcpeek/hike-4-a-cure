@@ -16,6 +16,9 @@ function App() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amountRaised, setAmountRaised] = useState(0);
+  const [currentFundraiserId, setCurrentFundraiserId] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     const fetchFundraisers = async () => {
@@ -37,24 +40,81 @@ function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const fundraiserData = {
+      year,
+      amountRaised,
+      description,
+      title,
+    };
+
     try {
-      const response = await fetch("http://localhost:5001/api/fundraisers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      let response: Response;
+
+      if (currentFundraiserId) {
+        // Update existing
+        response = await fetch(
+          `http://localhost:5001/api/fundraisers/${currentFundraiserId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(fundraiserData),
+          },
+        );
+      } else {
+        // Create new
+        response = await fetch("http://localhost:5001/api/fundraisers", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(fundraiserData),
+        });
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to ${currentFundraiserId ? "update" : "create"} fundraiser`,
+        );
+      }
+
+      const data = await response.json();
+
+      if (currentFundraiserId) {
+        setFundraisers((prev) =>
+          prev.map((f) => (f._id === currentFundraiserId ? data : f)),
+        );
+        setCurrentFundraiserId(null); // clear edit mode
+      } else {
+        setFundraisers((prev) => [...prev, data]);
+      }
+
+      // Reset form
+      setYear("");
+      setTitle("");
+      setDescription("");
+      setAmountRaised(0);
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
+
+  const handleDelete = async (fundraiserId: string) => {
+    console.log("well did we get here sister", fundraiserId);
+    const fundRaiserToDelete = fundraisers.find((f) => f._id === fundraiserId);
+    if (!fundRaiserToDelete) {
+      return "nothing to delete, chill";
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:5001/api/fundraisers/${fundraiserId}`,
+        {
+          method: "DELETE",
         },
-        body: JSON.stringify({
-          year: year,
-          amountRaised: amountRaised,
-          description: description,
-          title: title,
-        }),
-      });
+      );
       if (!response.ok) {
         throw new Error("Failed to create fundraiser");
       }
       const data = await response.json();
-      setFundraisers((prev) => [...prev, data]);
+      setFundraisers((prev) => prev.filter((f) => f._id !== fundraiserId));
       console.log("Created", data);
       setYear("");
       setTitle("");
@@ -65,14 +125,15 @@ function App() {
     }
   };
 
-
-  const handleDelete = async () => {
-
-  }
-
-  const handleUpdate = async () => {
-    
-  }
+  const handleUpdate = (fundraiserId: string) => {
+    setCurrentFundraiserId(fundraiserId);
+    const currentFundraiser = fundraisers.find((f) => f._id === fundraiserId);
+    if (!currentFundraiser) return;
+    setYear(currentFundraiser.year);
+    setAmountRaised(currentFundraiser.amountRaised);
+    setDescription(currentFundraiser.description);
+    setTitle(currentFundraiser.title);
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -86,7 +147,7 @@ function App() {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
-          gap: '20px'
+          gap: "20px",
         }}
       >
         {fundraisers.map((f) => {
@@ -101,19 +162,12 @@ function App() {
               }}
             >
               <div>{f.year}</div>
-              <div
-              style={{ fontWeight: 'bold'}}
-              >{f.title}</div>
+              <div style={{ fontWeight: "bold" }}>{f.title}</div>
               <div>{f.description}</div>
               <div>amount raised: {f.amountRaised}</div>
-              <button
-              onClick={handleUpdate}
-              >Update</button>
-              <button
-              onClick={handleDelete}
-              >Delete</button>
+              <button onClick={() => handleUpdate(f._id)}>Update</button>
+              <button onClick={() => handleDelete(f._id)}>Delete</button>
             </div>
-
           );
         })}
       </div>
