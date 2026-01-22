@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Layout } from "./components/Layout/Layout";
 import { SectionsAdmin } from "./pages/Admin/Sections/SectionsAdmin";
+import { FundraisersAdmin } from "./pages/Admin/Fundraisers/FundraisersAdmin";
 import { Typography, Box } from "@mui/material";
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -24,10 +25,7 @@ export default function App() {
           element={<PlaceholderPage title="Fundraisers" />}
         />
         <Route path="admin/sections" element={<SectionsAdmin />} />
-        <Route
-          path="admin/fundraisers"
-          element={<PlaceholderPage title="Admin: Fundraisers" />}
-        />
+        <Route path="admin/fundraisers" element={<FundraisersAdmin />} />
       </Route>
     </Routes>
   );
