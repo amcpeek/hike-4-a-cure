@@ -1,17 +1,17 @@
 import { List, ListItemButton, ListItemText, Paper } from "@mui/material";
-import type { Section } from "../../types";
 
-interface SectionNavProps {
-  sections: Section[];
-  activeId: string | null;
-  onSectionClick: (sectionId: string) => void;
+interface NavItem {
+  id: string;
+  label: string;
 }
 
-export function SectionNav({
-  sections,
-  activeId,
-  onSectionClick,
-}: SectionNavProps) {
+interface StickyNavProps {
+  items: NavItem[];
+  activeId: string | null;
+  onItemClick: (id: string) => void;
+}
+
+export function StickyNav({ items, activeId, onItemClick }: StickyNavProps) {
   return (
     <Paper
       elevation={0}
@@ -24,11 +24,11 @@ export function SectionNav({
       }}
     >
       <List disablePadding>
-        {sections.map((section) => (
+        {items.map((item) => (
           <ListItemButton
-            key={section._id}
-            selected={activeId === section._id}
-            onClick={() => onSectionClick(section._id)}
+            key={item.id}
+            selected={activeId === item.id}
+            onClick={() => onItemClick(item.id)}
             sx={{
               borderRadius: 1,
               mb: 0.5,
@@ -41,7 +41,7 @@ export function SectionNav({
               },
             }}
           >
-            <ListItemText primary={section.title} />
+            <ListItemText primary={item.label} />
           </ListItemButton>
         ))}
       </List>

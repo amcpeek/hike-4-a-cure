@@ -3,12 +3,12 @@ import { Box, Divider, Typography } from "@mui/material";
 import { PhotoGallery } from "../../components/PhotoGallery/PhotoGallery";
 import type { Section } from "../../types";
 
-interface SectionContentProps {
+interface SectionCardProps {
   section: Section;
 }
 
-export const SectionContent = forwardRef<HTMLDivElement, SectionContentProps>(
-  function SectionContent({ section }, ref) {
+export const SectionCard = forwardRef<HTMLDivElement, SectionCardProps>(
+  function SectionCard({ section }, ref) {
     return (
       <Box
         ref={ref}
