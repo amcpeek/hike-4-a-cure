@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -75,6 +75,17 @@ export function SectionForm({
         }
       : undefined,
   });
+
+  useEffect(() => {
+    if (open && !section) {
+      reset({
+        title: "",
+        description: "",
+        order: nextOrder,
+        photos: [],
+      });
+    }
+  }, [open, section, nextOrder, reset]);
 
   const handleClose = () => {
     reset();
