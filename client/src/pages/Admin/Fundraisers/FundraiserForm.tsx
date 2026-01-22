@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,7 +12,10 @@ import {
   Stack,
   InputAdornment,
 } from "@mui/material";
-import { PhotoManager } from "../../../components/PhotoManager/PhotoManager";
+import {
+  PhotoManager,
+  type PhotoManagerHandle,
+} from "../../../components/PhotoManager/PhotoManager";
 import type { Fundraiser, Photo } from "../../../types";
 
 const fundraiserSchema = z.object({
@@ -48,6 +52,7 @@ export function FundraiserForm({
   isSubmitting,
 }: FundraiserFormProps) {
   const isEditing = !!fundraiser;
+  const photoManagerRef = useRef<PhotoManagerHandle>(null);
 
   const {
     register,
@@ -55,6 +60,7 @@ export function FundraiserForm({
     control,
     formState: { errors },
     reset,
+    getValues,
   } = useForm<FundraiserFormData>({
     resolver: zodResolver(fundraiserSchema),
     defaultValues: {
@@ -80,9 +86,16 @@ export function FundraiserForm({
     onClose();
   };
 
+  const handleFormSubmit = handleSubmit(() => {
+    if (!photoManagerRef.current?.flushPending()) {
+      return;
+    }
+    onSubmit(getValues());
+  });
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleFormSubmit}>
         <DialogTitle>
           {isEditing ? "Edit Fundraiser" : "Add Fundraiser"}
         </DialogTitle>
@@ -134,6 +147,7 @@ export function FundraiserForm({
               control={control}
               render={({ field }) => (
                 <PhotoManager
+                  ref={photoManagerRef}
                   photos={field.value as Photo[]}
                   onChange={field.onChange}
                 />

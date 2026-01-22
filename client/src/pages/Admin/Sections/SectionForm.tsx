@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,7 +11,10 @@ import {
   TextField,
   Stack,
 } from "@mui/material";
-import { PhotoManager } from "../../../components/PhotoManager/PhotoManager";
+import {
+  PhotoManager,
+  type PhotoManagerHandle,
+} from "../../../components/PhotoManager/PhotoManager";
 import type { Section, Photo } from "../../../types";
 
 const sectionSchema = z.object({
@@ -45,6 +49,7 @@ export function SectionForm({
   isSubmitting,
 }: SectionFormProps) {
   const isEditing = !!section;
+  const photoManagerRef = useRef<PhotoManagerHandle>(null);
 
   const {
     register,
@@ -52,6 +57,7 @@ export function SectionForm({
     control,
     formState: { errors },
     reset,
+    getValues,
   } = useForm<SectionFormData>({
     resolver: zodResolver(sectionSchema),
     defaultValues: {
@@ -75,9 +81,16 @@ export function SectionForm({
     onClose();
   };
 
+  const handleFormSubmit = handleSubmit(() => {
+    if (!photoManagerRef.current?.flushPending()) {
+      return;
+    }
+    onSubmit(getValues());
+  });
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleFormSubmit}>
         <DialogTitle>{isEditing ? "Edit Section" : "Add Section"}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
@@ -111,6 +124,7 @@ export function SectionForm({
               control={control}
               render={({ field }) => (
                 <PhotoManager
+                  ref={photoManagerRef}
                   photos={field.value as Photo[]}
                   onChange={field.onChange}
                 />
