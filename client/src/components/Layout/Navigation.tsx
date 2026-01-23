@@ -16,10 +16,14 @@ import {
   useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import { SignedIn, UserButton } from "@clerk/clerk-react";
 
-const navItems = [
+const publicNavItems = [
   { label: "Home", path: "/" },
   { label: "Fundraisers", path: "/fundraisers" },
+];
+
+const adminNavItems = [
   { label: "Admin: Sections", path: "/admin/sections" },
   { label: "Admin: Fundraisers", path: "/admin/fundraisers" },
 ];
@@ -59,8 +63,8 @@ export function Navigation() {
               <MenuIcon />
             </IconButton>
           ) : (
-            <Box sx={{ display: "flex", gap: 1 }}>
-              {navItems.map((item) => (
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+              {publicNavItems.map((item) => (
                 <Button
                   key={item.path}
                   component={Link}
@@ -76,6 +80,25 @@ export function Navigation() {
                   {item.label}
                 </Button>
               ))}
+              <SignedIn>
+                {adminNavItems.map((item) => (
+                  <Button
+                    key={item.path}
+                    component={Link}
+                    to={item.path}
+                    color="inherit"
+                    sx={{
+                      borderBottom: isActive(item.path)
+                        ? "2px solid white"
+                        : "none",
+                      borderRadius: 0,
+                    }}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+                <UserButton />
+              </SignedIn>
             </Box>
           )}
         </Toolbar>
@@ -88,7 +111,7 @@ export function Navigation() {
       >
         <Box sx={{ width: 250 }} role="navigation">
           <List>
-            {navItems.map((item) => (
+            {publicNavItems.map((item) => (
               <ListItem key={item.path} disablePadding>
                 <ListItemButton
                   component={Link}
@@ -100,6 +123,23 @@ export function Navigation() {
                 </ListItemButton>
               </ListItem>
             ))}
+            <SignedIn>
+              {adminNavItems.map((item) => (
+                <ListItem key={item.path} disablePadding>
+                  <ListItemButton
+                    component={Link}
+                    to={item.path}
+                    selected={isActive(item.path)}
+                    onClick={() => setDrawerOpen(false)}
+                  >
+                    <ListItemText primary={item.label} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+              <ListItem>
+                <UserButton />
+              </ListItem>
+            </SignedIn>
           </List>
         </Box>
       </Drawer>
