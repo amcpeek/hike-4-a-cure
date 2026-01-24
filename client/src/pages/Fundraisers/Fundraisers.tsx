@@ -23,6 +23,7 @@ export function Fundraisers() {
           fundraiser={fundraiser}
         />
       )}
+      bannerSrc="/h4acBanner.png"
     />
   );
 }

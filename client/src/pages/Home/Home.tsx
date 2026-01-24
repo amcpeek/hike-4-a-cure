@@ -26,6 +26,7 @@ export function Home() {
       renderItem={(section, ref) => (
         <SectionCard key={section._id} ref={ref} section={section} />
       )}
+      bannerSrc="/h4acBanner.png"
     />
   );
 }

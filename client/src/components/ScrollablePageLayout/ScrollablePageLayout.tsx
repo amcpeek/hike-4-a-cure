@@ -32,6 +32,7 @@ interface ScrollablePageLayoutProps<T extends WithId> {
   getLabel: (item: T) => string;
   getHash?: (item: T) => string;
   renderItem: (item: T, ref: (el: HTMLDivElement | null) => void) => ReactNode;
+  bannerSrc?: string;
 }
 
 export function ScrollablePageLayout<T extends WithId>({
@@ -40,6 +41,7 @@ export function ScrollablePageLayout<T extends WithId>({
   getLabel,
   getHash,
   renderItem,
+  bannerSrc,
 }: ScrollablePageLayoutProps<T>) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -87,7 +89,7 @@ export function ScrollablePageLayout<T extends WithId>({
   const activeIndex = items.findIndex((item) => item._id === activeId);
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, pb: 4 }}>
+    <Container maxWidth="lg" sx={{ pb: 4 }}>
       {isMobile && (
         <>
           <Box
@@ -188,6 +190,19 @@ export function ScrollablePageLayout<T extends WithId>({
           </Box>
 
           <Box sx={{ flex: 1, minWidth: 0 }}>
+            {bannerSrc && (
+              <Box
+                component="img"
+                src={bannerSrc}
+                alt="Banner"
+                sx={{
+                  maxWidth: "80%",
+                  height: "auto",
+                  borderRadius: 2,
+                  mb: 3,
+                }}
+              />
+            )}
             {items.map((item) => renderItem(item, setItemRef(item._id)))}
           </Box>
         </Box>
