@@ -7,13 +7,13 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { theme } from "./theme";
 import App from "./App";
 import "./index.css";
-import { ClerkProvider } from '@clerk/clerk-react'
+import { ClerkProvider } from "@clerk/clerk-react";
 
 // Import your Publishable Key
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
-  throw new Error('Missing Publishable Key')
+  throw new Error("Missing Publishable Key");
 }
 
 const queryClient = new QueryClient({

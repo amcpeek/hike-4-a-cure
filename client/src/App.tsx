@@ -12,8 +12,22 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="fundraisers" element={<Fundraisers />} />
-        <Route path="admin/sections" element={<ProtectedRoute><SectionsAdmin /></ProtectedRoute>} />
-        <Route path="admin/fundraisers" element={<ProtectedRoute><FundraisersAdmin /></ProtectedRoute>} />
+        <Route
+          path="admin/sections"
+          element={
+            <ProtectedRoute>
+              <SectionsAdmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/fundraisers"
+          element={
+            <ProtectedRoute>
+              <FundraisersAdmin />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   );

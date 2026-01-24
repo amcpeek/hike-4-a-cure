@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import { Box, Divider, Typography } from "@mui/material";
+import DOMPurify from "dompurify";
 import { PhotoGallery } from "../../components/PhotoGallery/PhotoGallery";
 import type { Fundraiser } from "../../types";
 
@@ -39,8 +40,11 @@ export const FundraiserCard = forwardRef<HTMLDivElement, FundraiserCardProps>(
         {fundraiser.description && (
           <Typography
             component="div"
+            className="rich-content"
             sx={{ color: "text.secondary", mb: 2 }}
-            dangerouslySetInnerHTML={{ __html: fundraiser.description }}
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(fundraiser.description),
+            }}
           />
         )}
 

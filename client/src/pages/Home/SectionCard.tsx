@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import { Box, Divider, Typography } from "@mui/material";
+import DOMPurify from "dompurify";
 import { PhotoGallery } from "../../components/PhotoGallery/PhotoGallery";
 import type { Section } from "../../types";
 
@@ -22,8 +23,11 @@ export const SectionCard = forwardRef<HTMLDivElement, SectionCardProps>(
         {section.description && (
           <Typography
             component="div"
+            className="rich-content"
             sx={{ color: "text.secondary", mb: 2 }}
-            dangerouslySetInnerHTML={{ __html: section.description }}
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(section.description),
+            }}
           />
         )}
 

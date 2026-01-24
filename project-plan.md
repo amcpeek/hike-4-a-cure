@@ -515,9 +515,9 @@ client/src/
 
 ---
 
-### Phase 8: S3 Photo Uploads
+### Phase 8: S3 Photo Uploads + WYSIWYG Images
 
-**Goal:** Upload photos directly instead of pasting URLs
+**Goal:** Upload photos directly instead of pasting URLs, and insert images into rich text editor
 
 **Tasks:**
 
@@ -540,6 +540,13 @@ client/src/
    - URL input (existing)
    - File upload (new)
 
+5. Add image support to RichTextEditor:
+   - Install `@tiptap/extension-image`
+   - Add image button to toolbar
+   - Upload image to S3, insert into editor
+   - Position controls (float left/right, align center)
+   - Size controls (drag handles or presets: small/medium/large/full-width)
+
 **Files to create:**
 
 - `server/routes/upload.js`
@@ -550,6 +557,8 @@ client/src/
 
 - `server/index.js` - Add upload routes
 - `client/src/components/PhotoManager/PhotoManager.tsx`
+- `client/src/components/RichTextEditor/RichTextEditor.tsx` - Add Image extension
+- `client/src/components/RichTextEditor/Toolbar.tsx` - Add image button with position/size controls
 
 **Verification:**
 
@@ -558,6 +567,9 @@ client/src/
 - Image appears in S3
 - URL saved to database
 - Image displays on page
+- Can insert image into WYSIWYG editor
+- Can position image (left/center/right/float)
+- Can resize image in editor
 
 ---
 

@@ -38,17 +38,18 @@ export function Navigation() {
 
   return (
     <>
-      <AppBar position="static">
-        <Toolbar>
+      <AppBar position="static" elevation={0}>
+        <Toolbar sx={{ py: 1, px: 2 }}>
           <Typography
-            variant="h6"
+            variant="h5"
             component={Link}
             to="/"
             sx={{
               flexGrow: 1,
               textDecoration: "none",
               color: "inherit",
-              fontWeight: 600,
+              fontWeight: 700,
+              letterSpacing: "0.5px",
             }}
           >
             Hike For A Cure
@@ -71,10 +72,15 @@ export function Navigation() {
                   to={item.path}
                   color="inherit"
                   sx={{
+                    fontSize: "1rem",
+                    px: 2,
                     borderBottom: isActive(item.path)
                       ? "2px solid white"
-                      : "none",
+                      : "2px solid transparent",
                     borderRadius: 0,
+                    "&:hover": {
+                      backgroundColor: "rgba(255,255,255,0.1)",
+                    },
                   }}
                 >
                   {item.label}
@@ -88,10 +94,15 @@ export function Navigation() {
                     to={item.path}
                     color="inherit"
                     sx={{
+                      fontSize: "1rem",
+                      px: 2,
                       borderBottom: isActive(item.path)
                         ? "2px solid white"
-                        : "none",
+                        : "2px solid transparent",
                       borderRadius: 0,
+                      "&:hover": {
+                        backgroundColor: "rgba(255,255,255,0.1)",
+                      },
                     }}
                   >
                     {item.label}

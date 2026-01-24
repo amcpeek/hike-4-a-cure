@@ -15,6 +15,7 @@ import {
   PhotoManager,
   type PhotoManagerHandle,
 } from "../../../components/PhotoManager/PhotoManager";
+import { RichTextEditor } from "../../../components/RichTextEditor/RichTextEditor";
 import type { Section, Photo } from "../../../types";
 
 const sectionSchema = z.object({
@@ -113,14 +114,18 @@ export function SectionForm({
               fullWidth
               autoFocus
             />
-            <TextField
-              label="Description"
-              {...register("description")}
-              error={!!errors.description}
-              helperText={errors.description?.message}
-              fullWidth
-              multiline
-              rows={4}
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <RichTextEditor
+                  label="Description"
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
+                />
+              )}
             />
             <TextField
               label="Order"
