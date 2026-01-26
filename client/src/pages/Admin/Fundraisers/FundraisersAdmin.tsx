@@ -167,15 +167,12 @@ export function FundraisersAdmin() {
                   </Typography>
                 </Box>
 
-                <IconButton
-                  onClick={() => handleEdit(fundraiser)}
-                  color="primary"
-                >
+                <IconButton onClick={() => handleEdit(fundraiser)}>
                   <EditIcon />
                 </IconButton>
                 <IconButton
                   onClick={() => setDeleteTarget(fundraiser)}
-                  color="error"
+                  color="primary"
                 >
                   <DeleteIcon />
                 </IconButton>

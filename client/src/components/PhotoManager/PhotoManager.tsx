@@ -1,8 +1,6 @@
-import { useState, forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 import {
   Box,
-  TextField,
-  Button,
   IconButton,
   Card,
   CardMedia,
@@ -10,8 +8,8 @@ import {
   Stack,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 import type { Photo } from "../../types";
+import { FileUpload } from "../FileUpload/FileUpload";
 
 interface PhotoManagerProps {
   photos: Photo[];
@@ -24,65 +22,12 @@ export interface PhotoManagerHandle {
 
 export const PhotoManager = forwardRef<PhotoManagerHandle, PhotoManagerProps>(
   function PhotoManager({ photos, onChange }, ref) {
-    const [newUrl, setNewUrl] = useState("");
-    const [newTag, setNewTag] = useState("");
-    const [urlError, setUrlError] = useState("");
-
     useImperativeHandle(ref, () => ({
-      flushPending: () => {
-        if (!newUrl.trim()) {
-          return true;
-        }
-
-        try {
-          new URL(newUrl);
-        } catch {
-          setUrlError("Must be a valid URL");
-          return false;
-        }
-
-        onChange([
-          ...photos,
-          { url: newUrl.trim(), tag: newTag.trim() || undefined },
-        ]);
-        setNewUrl("");
-        setNewTag("");
-        return true;
-      },
+      flushPending: () => true,
     }));
-
-    const handleAdd = () => {
-      setUrlError("");
-
-      if (!newUrl.trim()) {
-        setUrlError("URL is required");
-        return;
-      }
-
-      try {
-        new URL(newUrl);
-      } catch {
-        setUrlError("Must be a valid URL");
-        return;
-      }
-
-      onChange([
-        ...photos,
-        { url: newUrl.trim(), tag: newTag.trim() || undefined },
-      ]);
-      setNewUrl("");
-      setNewTag("");
-    };
 
     const handleRemove = (index: number) => {
       onChange(photos.filter((_, i) => i !== index));
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        handleAdd();
-      }
     };
 
     return (
@@ -129,34 +74,11 @@ export const PhotoManager = forwardRef<PhotoManagerHandle, PhotoManagerProps>(
           </Stack>
         )}
 
-        <Stack direction="row" gap={1} alignItems="flex-start">
-          <TextField
-            label="Photo URL"
-            value={newUrl}
-            onChange={(e) => setNewUrl(e.target.value)}
-            onKeyDown={handleKeyDown}
-            error={!!urlError}
-            helperText={urlError}
-            size="small"
-            sx={{ flex: 2 }}
-          />
-          <TextField
-            label="Tag (optional)"
-            value={newTag}
-            onChange={(e) => setNewTag(e.target.value)}
-            onKeyDown={handleKeyDown}
-            size="small"
-            sx={{ flex: 1 }}
-          />
-          <Button
-            variant="outlined"
-            onClick={handleAdd}
-            startIcon={<AddIcon />}
-            sx={{ minWidth: 100 }}
-          >
-            Add
-          </Button>
-        </Stack>
+        <FileUpload
+          onUpload={(url) => {
+            onChange([...photos, { url, tag: undefined }]);
+          }}
+        />
       </Box>
     );
   },

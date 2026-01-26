@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const fundraiserRoutes = require("./routes/fundraisers");
 const sectionRoutes = require("./routes/sections");
+const uploadRoutes = require("./routes/upload");
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/fundraisers", fundraiserRoutes);
 app.use("/api/sections", sectionRoutes);
+app.use("/api/upload", uploadRoutes);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {

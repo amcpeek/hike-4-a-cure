@@ -1,4 +1,11 @@
-import { IconButton, Stack, Divider, Tooltip } from "@mui/material";
+import { useRef, useState } from "react";
+import {
+  IconButton,
+  Stack,
+  Divider,
+  Tooltip,
+  CircularProgress,
+} from "@mui/material";
 import {
   FormatBold,
   FormatItalic,
@@ -8,10 +15,12 @@ import {
   LinkOff,
   FormatSize,
   FormatColorText,
+  Image as ImageIcon,
 } from "@mui/icons-material";
 import type { Editor } from "@tiptap/react";
 import { brandColors, fontSizes } from "../../theme";
 import { ToolbarMenu } from "./ToolbarMenu";
+import { uploadFile } from "../../api/upload";
 
 interface ToolbarProps {
   editor: Editor;
@@ -31,7 +40,38 @@ const COLOR_OPTIONS = [
   { label: "Default", value: null },
 ];
 
+const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+];
+
 export function Toolbar({ editor }: ToolbarProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      alert("Invalid file type. Please upload JPEG, PNG, GIF, or WebP.");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const url = await uploadFile(file);
+      editor.chain().focus().setImage({ src: url }).run();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to upload image");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+
   const setLink = () => {
     const previousUrl = editor.getAttributes("link").href;
     const url = window.prompt("URL", previousUrl);
@@ -162,6 +202,31 @@ export function Toolbar({ editor }: ToolbarProps) {
           </IconButton>
         </Tooltip>
       )}
+
+      <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        style={{ display: "none" }}
+      />
+      <Tooltip title="Insert Image">
+        <span>
+          <IconButton
+            size="small"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+          >
+            {uploading ? (
+              <CircularProgress size={18} />
+            ) : (
+              <ImageIcon fontSize="small" />
+            )}
+          </IconButton>
+        </span>
+      </Tooltip>
     </Stack>
   );
 }

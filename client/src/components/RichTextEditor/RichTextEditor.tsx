@@ -3,6 +3,7 @@ import { Box, FormHelperText, InputLabel } from "@mui/material";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { Toolbar } from "./Toolbar";
@@ -33,6 +34,13 @@ export function RichTextEditor({
         HTMLAttributes: {
           target: "_blank",
           rel: "noopener noreferrer",
+        },
+      }),
+      Image.configure({
+        inline: false,
+        allowBase64: false,
+        HTMLAttributes: {
+          style: "max-width: 100%; height: auto;",
         },
       }),
       TextStyle,
