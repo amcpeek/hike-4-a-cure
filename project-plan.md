@@ -20,7 +20,7 @@ Major frontend refactor to create a 4-page application with admin capabilities, 
 
 ## Progress Tracker
 
-### Phase 1: Foundation ⏳ In Progress
+### Phase 1: Foundation ✅ Complete
 
 - [x] Create CLAUDE.md with project guidelines
 - [x] Install dependencies (react-router-dom, MUI, React Query, etc.)
@@ -36,23 +36,23 @@ Major frontend refactor to create a 4-page application with admin capabilities, 
 - [x] Create `.env.example`
 - [x] Verify app loads without errors
 
-### Phase 2: Admin Sections ⬚
+### Phase 2: Admin Sections ✅ Complete
 
-### Phase 3: Admin Fundraisers ⬚
+### Phase 3: Admin Fundraisers ✅ Complete
 
-### Phase 4: Home Page ⬚
+### Phase 4: Home Page ✅ Complete
 
-### Phase 5: Fundraisers Page ⬚
+### Phase 5: Fundraisers Page ✅ Complete
 
-### Phase 6: Auth (Clerk) ⬚
+### Phase 6: Auth (Clerk) ✅ Complete
 
-### Phase 7: WYSIWYG (TipTap) ⬚
+### Phase 7: WYSIWYG (TipTap) ✅ Complete
 
-### Phase 8: S3 Uploads ⬚
+### Phase 8: S3 Uploads ✅ Complete
 
-### Phase 9: Production ⬚
+### Phase 9: Production (Render) ⏳ Next Up
 
-### Phase 10: Testing ⬚
+### Phase 10: Testing ⬚ Lower Priority
 
 ---
 
@@ -573,45 +573,227 @@ client/src/
 
 ---
 
-### Phase 9: Production Environment
+### Phase 9: Production Deployment (Render)
 
-**Goal:** Prepare for deployment
+**Goal:** Deploy the app to Render with working frontend, backend, and all integrations
 
-**Tasks:**
+**Architecture:**
 
-1. Environment configuration:
-   - Create `.env.production` with production API URL
-   - Create `.env.example` documenting all vars
+- **Backend**: Render Web Service (Express API)
+- **Frontend**: Render Static Site (React/Vite)
+- **Database**: MongoDB Atlas (already cloud-hosted)
+- **Storage**: AWS S3 (already configured)
+- **Auth**: Clerk (already configured)
 
-2. Build optimization:
-   - Verify Vite build works
-   - Check bundle size
+---
 
-3. Backend preparation:
-   - Add CORS whitelist for production domain
-   - Add rate limiting
-   - Add request logging
+#### Step 1: Prepare the Codebase
 
-4. Error boundaries:
-   - Create ErrorBoundary component
-   - Wrap route components
+1. **Create server package.json** (Render needs this for backend):
 
-5. Loading states:
-   - Create skeleton loaders for pages
-   - Suspense boundaries
+   ```bash
+   # In /server folder, create package.json:
+   {
+     "name": "hike-4-a-cure-server",
+     "version": "1.0.0",
+     "main": "index.js",
+     "scripts": {
+       "start": "node index.js"
+     },
+     "dependencies": {
+       "@aws-sdk/client-s3": "^3.x.x",
+       "@aws-sdk/s3-request-presigner": "^3.x.x",
+       "cors": "^2.x.x",
+       "dotenv": "^16.x.x",
+       "express": "^4.x.x",
+       "mongoose": "^8.x.x"
+     }
+   }
+   ```
 
-**Files to create:**
+   Run `npm install` in server folder to generate package-lock.json.
 
-- `client/.env.production`
-- `client/src/components/ErrorBoundary.tsx`
-- `client/src/components/Skeletons/`
+2. **Update CORS for production** in `server/index.js`:
+
+   ```javascript
+   const allowedOrigins = [
+     "http://localhost:5173",
+     process.env.FRONTEND_URL, // Add this env var in Render
+   ].filter(Boolean);
+
+   app.use(
+     cors({
+       origin: allowedOrigins,
+       credentials: true,
+     }),
+   );
+   ```
+
+3. **Create `.env.example`** (document all required vars):
+
+   ```
+   # Server (.env in root)
+   PORT=5001
+   MONGO_URI=mongodb+srv://...
+   AWS_REGION=us-west-1
+   AWS_ACCESS_KEY_ID=...
+   AWS_SECRET_ACCESS_KEY=...
+   AWS_S3_BUCKET=...
+   FRONTEND_URL=https://your-frontend.onrender.com
+
+   # Client (client/.env.local)
+   VITE_API_URL=http://localhost:5001/api
+   VITE_CLERK_PUBLISHABLE_KEY=pk_...
+   ```
+
+4. **Verify builds work locally**:
+   ```bash
+   cd client && npm run build  # Should create client/dist/
+   ```
+
+---
+
+#### Step 2: MongoDB Atlas - Allow Render IPs
+
+1. Go to [MongoDB Atlas](https://cloud.mongodb.com)
+2. Select your cluster → **Network Access** → **Add IP Address**
+3. Add `0.0.0.0/0` (allow from anywhere) or add Render's static IPs
+4. This is required because Render uses dynamic IPs
+
+---
+
+#### Step 3: Deploy Backend (Render Web Service)
+
+1. Go to [Render Dashboard](https://dashboard.render.com) → **New** → **Web Service**
+
+2. Connect your GitHub repo: `amcpeek/hike-4-a-cure`
+
+3. Configure the service:
+   - **Name**: `hike-4-a-cure-api`
+   - **Region**: Oregon (US West) - close to your S3 bucket
+   - **Branch**: `main`
+   - **Root Directory**: `server`
+   - **Runtime**: Node
+   - **Build Command**: `npm install`
+   - **Start Command**: `node index.js`
+   - **Instance Type**: Free (or Starter for always-on)
+
+4. Add **Environment Variables**:
+   | Key | Value |
+   |-----|-------|
+   | `MONGO_URI` | Your MongoDB Atlas connection string |
+   | `AWS_REGION` | `us-west-1` |
+   | `AWS_ACCESS_KEY_ID` | Your AWS key |
+   | `AWS_SECRET_ACCESS_KEY` | Your AWS secret |
+   | `AWS_S3_BUCKET` | `hike-4-a-cure-photos` |
+   | `FRONTEND_URL` | (Add after frontend deploy) |
+
+5. Click **Create Web Service**
+
+6. Note your backend URL: `https://hike-4-a-cure-api.onrender.com`
+
+---
+
+#### Step 4: Deploy Frontend (Render Static Site)
+
+1. In Render Dashboard → **New** → **Static Site**
+
+2. Connect the same GitHub repo
+
+3. Configure the site:
+   - **Name**: `hike-4-a-cure`
+   - **Branch**: `main`
+   - **Root Directory**: `client`
+   - **Build Command**: `npm install && npm run build`
+   - **Publish Directory**: `dist`
+
+4. Add **Environment Variables**:
+   | Key | Value |
+   |-----|-------|
+   | `VITE_API_URL` | `https://hike-4-a-cure-api.onrender.com/api` |
+   | `VITE_CLERK_PUBLISHABLE_KEY` | Your Clerk publishable key |
+
+5. Click **Create Static Site**
+
+6. Note your frontend URL: `https://hike-4-a-cure.onrender.com`
+
+---
+
+#### Step 5: Connect Frontend to Backend
+
+1. Go back to your **Web Service** (backend) in Render
+2. Add/update environment variable:
+   - `FRONTEND_URL` = `https://hike-4-a-cure.onrender.com`
+3. This allows CORS from your frontend
+
+---
+
+#### Step 6: Configure Clerk for Production
+
+1. Go to [Clerk Dashboard](https://dashboard.clerk.com)
+2. Select your app → **Domains**
+3. Add your production domain: `hike-4-a-cure.onrender.com`
+4. If using a custom domain later, add that too
+
+---
+
+#### Step 7: Configure S3 CORS (if needed)
+
+If images don't load, update your S3 bucket CORS:
+
+1. AWS Console → S3 → Your bucket → **Permissions** → **CORS**
+2. Add:
+   ```json
+   [
+     {
+       "AllowedOrigins": [
+         "http://localhost:5173",
+         "https://hike-4-a-cure.onrender.com"
+       ],
+       "AllowedMethods": ["GET", "PUT"],
+       "AllowedHeaders": ["*"],
+       "MaxAgeSeconds": 3000
+     }
+   ]
+   ```
+
+---
+
+#### Step 8: Test Everything
+
+1. **Frontend loads**: Visit `https://hike-4-a-cure.onrender.com`
+2. **API works**: Visit `https://hike-4-a-cure-api.onrender.com`
+3. **Auth works**: Try signing in with Clerk
+4. **Data loads**: Sections and fundraisers appear
+5. **Images load**: Photos from S3 display correctly
+6. **Admin works**: Can create/edit/delete (when signed in)
+
+---
+
+#### Optional: Custom Domain
+
+1. In Render, go to your Static Site → **Settings** → **Custom Domains**
+2. Add your domain (e.g., `hike4acure.org`)
+3. Update DNS records as instructed
+4. Update Clerk with the new domain
+5. Update `FRONTEND_URL` env var in backend
+
+---
+
+**Files to modify:**
+
+- `server/index.js` - Add dynamic CORS
+- `server/package.json` - Create if doesn't exist
+- `.env.example` - Document all environment variables
 
 **Verification:**
 
-- `npm run build` succeeds
-- Production build runs locally
-- No hardcoded localhost URLs
-- Errors caught and displayed gracefully
+- [ ] Backend deploys and shows "API is running" at root URL
+- [ ] Frontend deploys and loads without errors
+- [ ] API calls work (sections/fundraisers load)
+- [ ] Clerk auth works in production
+- [ ] Image uploads work
+- [ ] No console errors in production
 
 ---
 
@@ -661,16 +843,16 @@ client/src/
 
 ## Summary: Implementation Order
 
-1. **Phase 1: Foundation** - Routing, MUI, API layer, base components
-2. **Phase 2: Admin Sections** - CRUD with forms, validation, photos
-3. **Phase 3: Admin Fundraisers** - CRUD reusing Phase 2 patterns
-4. **Phase 4: Home Page** - Public sections display
-5. **Phase 5: Fundraisers Page** - Public archive display
-6. **Phase 6: Auth** - Clerk integration
-7. **Phase 7: WYSIWYG** - TipTap rich text
-8. **Phase 8: S3 Uploads** - File upload replacing URL input
-9. **Phase 9: Production** - Environment, errors, optimization
-10. **Phase 10: Testing** - FE and BE test coverage (lower priority)
+1. **Phase 1: Foundation** ✅ - Routing, MUI, API layer, base components
+2. **Phase 2: Admin Sections** ✅ - CRUD with forms, validation, photos
+3. **Phase 3: Admin Fundraisers** ✅ - CRUD reusing Phase 2 patterns
+4. **Phase 4: Home Page** ✅ - Public sections display
+5. **Phase 5: Fundraisers Page** ✅ - Public archive display
+6. **Phase 6: Auth** ✅ - Clerk integration
+7. **Phase 7: WYSIWYG** ✅ - TipTap rich text
+8. **Phase 8: S3 Uploads** ✅ - File upload replacing URL input
+9. **Phase 9: Production (Render)** ⏳ - Deploy to Render, custom domain later
+10. **Phase 10: Testing** ⬚ - FE and BE test coverage (lower priority)
 
 ---
 

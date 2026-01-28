@@ -9,8 +9,18 @@ const uploadRoutes = require("./routes/upload");
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// CORS - allow localhost for dev and production frontend
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // MongoDB Connection

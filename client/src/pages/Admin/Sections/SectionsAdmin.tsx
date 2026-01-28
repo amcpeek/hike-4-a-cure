@@ -192,12 +192,12 @@ export function SectionsAdmin() {
                   </Typography>
                 </Box>
 
-                <IconButton onClick={() => handleEdit(section)} color="primary">
+                <IconButton onClick={() => handleEdit(section)}>
                   <EditIcon />
                 </IconButton>
                 <IconButton
                   onClick={() => setDeleteTarget(section)}
-                  color="error"
+                  color="primary"
                 >
                   <DeleteIcon />
                 </IconButton>
