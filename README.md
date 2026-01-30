@@ -17,3 +17,11 @@ A full-stack MERN application built to archive and display the annual fundraisin
    ```bash
    npm run dev
    ```
+
+
+
+// add ability to have a tag
+// history should just link you to the other page
+
+// be able to resize photos in wygiwyg
+// t-shirt, lapel pin,

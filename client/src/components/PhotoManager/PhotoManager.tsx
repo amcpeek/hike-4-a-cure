@@ -6,6 +6,7 @@ import {
   CardMedia,
   Typography,
   Stack,
+  TextField,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { Photo } from "../../types";
@@ -52,9 +53,19 @@ export const PhotoManager = forwardRef<PhotoManagerHandle, PhotoManagerProps>(
                   }}
                 />
                 <Box sx={{ p: 0.5 }}>
-                  <Typography variant="caption" noWrap title={photo.tag}>
-                    {photo.tag || "No tag"}
-                  </Typography>
+                  <TextField
+                    size="small"
+                    placeholder="Add tag"
+                    value={photo.tag || ""}
+                    onChange={(e) => {
+                      const updated = [...photos];
+                      updated[index] = { ...photo, tag: e.target.value };
+                      onChange(updated);
+                    }}
+                    variant="standard"
+                    sx={{ width: "100%" }}
+                    slotProps={{ input: { style: { fontSize: 12 } } }}
+                  />
                 </Box>
                 <IconButton
                   size="small"
