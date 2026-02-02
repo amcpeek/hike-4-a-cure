@@ -690,7 +690,7 @@ client/src/
 
 5. Click **Create Web Service**
 
-6. Note your backend URL: `https://hike-4-a-cure-api.onrender.com`
+6. Note your backend URL: `https://hike-for-a-cure-api.onrender.com`
 
 ---
 
@@ -701,7 +701,7 @@ client/src/
 2. Connect the same GitHub repo
 
 3. Configure the site:
-   - **Name**: `hike-4-a-cure`
+   - **Name**: `hike-for-a-cure`
    - **Branch**: `main`
    - **Root Directory**: `client`
    - **Build Command**: `npm install && npm run build`
@@ -710,12 +710,12 @@ client/src/
 4. Add **Environment Variables**:
    | Key | Value |
    |-----|-------|
-   | `VITE_API_URL` | `https://hike-4-a-cure-api.onrender.com/api` |
+   | `VITE_API_URL` | `https://hike-for-a-cure-api.onrender.com/api` |
    | `VITE_CLERK_PUBLISHABLE_KEY` | Your Clerk publishable key |
 
 5. Click **Create Static Site**
 
-6. Note your frontend URL: `https://hike-4-a-cure.onrender.com`
+6. Note your frontend URL: `https://hike-for-a-cure.onrender.com`
 
 ---
 
@@ -723,7 +723,7 @@ client/src/
 
 1. Go back to your **Web Service** (backend) in Render
 2. Add/update environment variable:
-   - `FRONTEND_URL` = `https://hike-4-a-cure.onrender.com`
+   - `FRONTEND_URL` = `https://hike-for-a-cure.onrender.com`
 3. This allows CORS from your frontend
 
 ---
@@ -732,7 +732,7 @@ client/src/
 
 1. Go to [Clerk Dashboard](https://dashboard.clerk.com)
 2. Select your app → **Domains**
-3. Add your production domain: `hike-4-a-cure.onrender.com`
+3. Add your production domain: `hike-for-a-cure.onrender.com`
 4. If using a custom domain later, add that too
 
 ---
@@ -748,7 +748,7 @@ If images don't load, update your S3 bucket CORS:
      {
        "AllowedOrigins": [
          "http://localhost:5173",
-         "https://hike-4-a-cure.onrender.com"
+         "https://hike-for-a-cure.onrender.com"
        ],
        "AllowedMethods": ["GET", "PUT"],
        "AllowedHeaders": ["*"],
@@ -761,8 +761,8 @@ If images don't load, update your S3 bucket CORS:
 
 #### Step 8: Test Everything
 
-1. **Frontend loads**: Visit `https://hike-4-a-cure.onrender.com`
-2. **API works**: Visit `https://hike-4-a-cure-api.onrender.com`
+1. **Frontend loads**: Visit `https://hike-for-a-cure.onrender.com`
+2. **API works**: Visit `https://hike-for-a-cure-api.onrender.com`
 3. **Auth works**: Try signing in with Clerk
 4. **Data loads**: Sections and fundraisers appear
 5. **Images load**: Photos from S3 display correctly
